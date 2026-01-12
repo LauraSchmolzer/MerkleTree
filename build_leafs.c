@@ -20,7 +20,7 @@ void build_leafs(const char *text, unsigned char leafs[][SHA256_DIGEST_LENGTH], 
 }
 
 // Helpers function to hash a list of words into nodes
-void hash_words(const char *words[], unsigned char nodes[][SHA256_DIGEST_LENGTH], int n_words) {
+void hash_words(char *words[], unsigned char nodes[][SHA256_DIGEST_LENGTH], int n_words) {
     for (int i = 0; i < n_words; i++) {
         SHA256((unsigned char *)words[i], strlen(words[i]), nodes[i]);
     }

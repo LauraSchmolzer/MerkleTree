@@ -3,16 +3,18 @@
 int main() {
     const char *text = "Hello words slay";
 
-    int max_words = 10;                     // max words to split
-    char *words[max_words];                 // array to store pointers to words
+    unsigned char root_hash[SHA256_DIGEST_LENGTH];
+    // Build the Merkle tree and get the root node
+    MerkleNode *root = build_merkle_tree(text, root_hash);
 
-    // Slice text into words
-    int n_filled = slice_text_into_words(text, words, max_words);
-
-    // Print the words
-    for (int i = 0; i < n_filled; i++) {
-        printf("Word %d: %s\n", i, words[i]);
+    // Print the root hash in hex
+    printf("Merkle root: ");
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+        printf("%02x", root_hash[i]);
     }
+    printf("\n");
+
+
 
     return 0;
 }
