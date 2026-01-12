@@ -22,9 +22,10 @@ typedef struct MerkleTree {
 } MerkleTree;
 
 MerkleNode* build_merkle_tree(const char *text, unsigned char root_hash[SHA256_DIGEST_LENGTH]);
-void build_leafs(const char *text, unsigned char leafs[][SHA256_DIGEST_LENGTH], int *n_leafs);
-void hash_words(char *words[], unsigned char nodes[][SHA256_DIGEST_LENGTH], int n_words);
+MerkleNode** build_leafs(const char *text, int *n_leaves);
 int slice_text_into_words(const char *text, char *words[], int n_words);
 MerkleNode* build_nodes(MerkleNode *left, MerkleNode *right);
+void free_merkle_tree(MerkleNode *node);
+MerkleNode* create_leaf(const char *word);
 
 #endif /* COMMON_H */

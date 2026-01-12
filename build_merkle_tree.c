@@ -1,55 +1,40 @@
 #include "common.h"
 
 MerkleNode* build_merkle_tree(const char *text, unsigned char root_hash[SHA256_DIGEST_LENGTH]) {
-
     // Create leaf nodes
-    unsigned char leafs[MAX_WORD_LENGTH][SHA256_DIGEST_LENGTH];
-    int n_nodes;
+    int n_leaves;
+    MerkleNode **leaves = build_leafs(text, &n_leaves);
 
-    // Build the hashed words as leafs from the text
-    build_leafs(text, leafs, &n_nodes);
+    // Work array for current level
+    MerkleNode **current_level = malloc(n_leaves * sizeof(MerkleNode*)); // array of pointers to leaves
+    for (int i = 0; i < n_leaves; i++) current_level[i] = leaves[i]; // copy pointers
+    free(leaves); // free the initial pointer array, nodes remain
 
-    // Create the MerkleNode struct for the hashed leafs
-    MerkleNode **nodes = malloc(n_nodes * sizeof(MerkleNode*));
-    for (int i = 0; i < n_nodes; i++) {
-        nodes[i] = malloc(sizeof(MerkleNode));
-        memcpy(nodes[i]->hash, leafs[i], SHA256_DIGEST_LENGTH);
-        nodes[i]->left = NULL;
-        nodes[i]->right = NULL;
-    }
+    int level_size = n_leaves;
 
-    // nodes: array of MerkleNode* at current level
-    // n_nodes: number of nodes at this level
-    while (n_nodes > 1) {
-        // Check if odd -> duplicate last node
-        if (n_nodes % 2 != 0) {
-            nodes = realloc(nodes, (n_nodes + 1) * sizeof(MerkleNode*));
-            nodes[n_nodes] = nodes[n_nodes - 1]; // duplicate last node pointer
-            n_nodes++;
+    while (level_size > 1) { // while more than one node at current level
+        int next_level_size = (level_size + 1) / 2; 
+        MerkleNode **next_level = malloc(next_level_size * sizeof(MerkleNode*)); // array of pointers for next level
+
+        for (int i = 0, j = 0; i < level_size; i += 2, j++) {
+            if (i + 1 < level_size) {
+                // Pointer at j in next level is parent of i and i+1 in current level
+                next_level[j] = build_nodes(current_level[i], current_level[i+1]); // pair nodes and build parent
+            } else {
+                // Last node duplicated if odd
+                next_level[j] = build_nodes(current_level[i], current_level[i]);
+            }
         }
 
-        // Create a new array for the next level
-        int new_level_count = n_nodes / 2;
-        MerkleNode **new_level = malloc(new_level_count * sizeof(MerkleNode*));
-
-        // Combine nodes in pairs
-        for (int i = 0; i < n_nodes; i += 2) {
-            new_level[i / 2] = build_nodes(nodes[i], nodes[i + 1]);
-        }
-
-        // Free the old level if you allocated dynamically
-        free(nodes);
-
-        // Move to the next level
-        nodes = new_level;
-        n_nodes = new_level_count;
+        free(current_level); // free the array of pointers
+        current_level = next_level; // move to next level
+        level_size = next_level_size;
     }
 
-    // nodes[0] is the root
-    memcpy(root_hash, nodes[0]->hash, SHA256_DIGEST_LENGTH);
+    memcpy(root_hash, current_level[0]->hash, SHA256_DIGEST_LENGTH); // copy root hash
+    MerkleNode *root = current_level[0]; // root node
+    free(current_level); // free the final array of pointers
 
-    MerkleNode *root = nodes[0]; // keep pointer to root for further use
-    free(nodes); // free the array of the node pointers, not nodes themselves
     return root;
 }
 
@@ -70,4 +55,11 @@ MerkleNode* build_nodes(MerkleNode *left, MerkleNode *right) {
     parent->right = right;
 
     return parent;
+}
+
+void free_merkle_tree(MerkleNode *node) {
+    if (!node) return;
+    free_merkle_tree(node->left);
+    free_merkle_tree(node->right);
+    free(node);
 }
