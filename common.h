@@ -21,8 +21,7 @@ typedef struct MerkleTree {
     MerkleNode **leaves; // array of pointers to leaf nodes
 } MerkleTree;
 
-
-MerkleNode* create_leaf(const char *word);
+MerkleNode* build_merkle_tree(const char *text, unsigned char root_hash[SHA256_DIGEST_LENGTH])
 void build_leafs(const char *text, unsigned char leafs[][SHA256_DIGEST_LENGTH], int *n_leafs);
 
 #endif /* COMMON_H */

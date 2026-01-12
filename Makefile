@@ -10,7 +10,7 @@ CFLAGS = -I$(OPENSSL_INCLUDE) -Wall -O2
 LDFLAGS = -L$(OPENSSL_LIB) -lssl -lcrypto
 
 # Source files
-SRCS = main.c structure_leafs.c
+SRCS = main.c build_leafs.c build_merkle_tree.c
 OBJS = $(SRCS:.c=.o)
 
 # Output executable

@@ -1,14 +1,5 @@
 #include "common.h"
 
-// Function to create a leaf node from a word
-MerkleNode* create_leaf(const char *word) {
-    MerkleNode *node = malloc(sizeof(MerkleNode));
-    SHA256((unsigned char*)word, strlen(word), node->hash);
-    node->left = NULL;
-    node->right = NULL;
-    return node;
-}
-
 void build_leafs(const char *text, unsigned char leafs[][SHA256_DIGEST_LENGTH], int *n_leafs) {
     // Slice the text into words
     int max_words = MAX_WORD_LENGTH; // max words to split
@@ -16,14 +7,6 @@ void build_leafs(const char *text, unsigned char leafs[][SHA256_DIGEST_LENGTH], 
 
     // Slice text into words
     int n_words = slice_text_into_words(text, words, max_words);
-
-    // Check if number of nodes is odd, if so duplicate last node
-
-    if (n_words % 2 != 0) {
-        words[n_words] = malloc(strlen(words[n_words - 1]) + 1); // allocate memory for duplicated word
-        strcpy(words[n_words], words[n_words - 1]); // duplicate last word
-        n_words++; // now its even again
-    }
 
     // Hash the words
     hash_words(words, leafs, n_words);
