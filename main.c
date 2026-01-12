@@ -1,22 +1,17 @@
 #include "common.h"
 
 int main() {
-    const char *words[] = {"Hello", "world", "slay"};
-    int n_words = sizeof(words) / sizeof(words[0]);
+    const char *text = "Hello words slay";
 
-    // 2D array to store hashes
-    unsigned char nodes[n_words][SHA256_DIGEST_LENGTH];
+    int max_words = 10;                     // max words to split
+    char *words[max_words];                 // array to store pointers to words
 
-    // Hash the words
-    hash_words(words, n_words, nodes);
+    // Slice text into words
+    int n_filled = slice_text_into_words(text, words, max_words);
 
-    // Print hashes
-    for (int i = 0; i < n_words; i++) {
-        printf("Word: %s\nHash: ", words[i]);
-        for (int j = 0; j < SHA256_DIGEST_LENGTH; j++) {
-            printf("%02x", nodes[i][j]);
-        }
-        printf("\n\n");
+    // Print the words
+    for (int i = 0; i < n_filled; i++) {
+        printf("Word %d: %s\n", i, words[i]);
     }
 
     return 0;
