@@ -7,10 +7,10 @@ OPENSSL_LIB     = /opt/homebrew/opt/openssl@3/lib
 
 # Compiler flags
 CFLAGS = -I$(OPENSSL_INCLUDE) -Wall -O2
-LDFLAGS = -L$(OPENSSL_LIB) -lssl -lcrypto
+LDFLAGS = -L$(OPENSSL_LIB) -lssl -lcrypto -lm
 
 # Source files
-SRCS = main.c build_leafs.c build_merkle_tree.c
+SRCS = main.c build_leafs.c build_merkle_tree.c authentication_path.c verification.c
 OBJS = $(SRCS:.c=.o)
 
 # Output executable

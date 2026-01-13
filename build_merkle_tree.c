@@ -1,9 +1,16 @@
 #include "common.h"
 
-MerkleNode* build_merkle_tree(const char *text, unsigned char root_hash[SHA256_DIGEST_LENGTH]) {
+void build_merkle_tree(const char *text, unsigned char root_hash[SHA256_DIGEST_LENGTH], MerkleTree *tree) {
     // Create leaf nodes
     int n_leaves;
     MerkleNode **leaves = build_leafs(text, &n_leaves);
+
+    // Populate the tree structure with leaves
+    tree->n_leaves = n_leaves;
+    tree->leaves = malloc(n_leaves * sizeof(MerkleNode*)); // array of pointers to leaves
+    for (int i = 0; i < n_leaves; i++) {
+        tree->leaves[i] = leaves[i]; // copy leaf pointers to the tree structure
+    }
 
     // Work array for current level
     MerkleNode **current_level = malloc(n_leaves * sizeof(MerkleNode*)); // array of pointers to leaves
@@ -31,11 +38,11 @@ MerkleNode* build_merkle_tree(const char *text, unsigned char root_hash[SHA256_D
         level_size = next_level_size;
     }
 
+    // Set root in tree
+    tree->root = current_level[0];
     memcpy(root_hash, current_level[0]->hash, SHA256_DIGEST_LENGTH); // copy root hash
-    MerkleNode *root = current_level[0]; // root node
-    free(current_level); // free the final array of pointers
 
-    return root;
+    free(current_level); // free the final array of pointers
 }
 
 // Helper function to hash two nodes together
@@ -53,6 +60,10 @@ MerkleNode* build_nodes(MerkleNode *left, MerkleNode *right) {
     // Set child pointers
     parent->left = left;
     parent->right = right;
+    parent->parent = NULL;   // root will remain NULL
+
+    left->parent = parent;   // set parent pointers
+    right->parent = parent;  
 
     return parent;
 }

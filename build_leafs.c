@@ -5,6 +5,7 @@ MerkleNode* create_leaf(const char *word) {
     SHA256((unsigned char*)word, strlen(word), leaf->hash);
     leaf->left = NULL;
     leaf->right = NULL;
+    leaf->parent = NULL;
     return leaf;
 }
 
