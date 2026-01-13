@@ -5,7 +5,9 @@ Create a Merkle Tree structure from a small text, using words as leaf nodes. The
 - Build a Merkle Tree from a string of text of a maximum of 100 words.
 - Use *SHA-256* hashes for secure leaf and node hashing.
 - Full tree structure is kept in memory for generating *athentication paths*.
-- Supports oddn number of words by duplicating last leaf automatically.
+- Supports odd number of words by duplicating last leaf automatically.
+- Create a proof bundle based on the purported word and its index.
+- Verify the proof bundle, containing the puported word and root, its index and teh authentication path. 
 
 ## Libraries used
 - OpenSSL for SHA-256 hashing
