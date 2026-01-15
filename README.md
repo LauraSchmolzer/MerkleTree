@@ -7,7 +7,7 @@ Create a Merkle Tree structure from a small text, using words as leaf nodes. The
 - Full tree structure is kept in memory for generating *athentication paths*.
 - Supports odd number of words by duplicating last leaf automatically.
 - Create a proof bundle based on the purported word and its index.
-- Verify the proof bundle, containing the puported word and root, its index and teh authentication path. 
+- Verify the proof bundle, containing the puported word and root, its index and the authentication path. 
 
 ## Libraries used
 - OpenSSL for SHA-256 hashing
